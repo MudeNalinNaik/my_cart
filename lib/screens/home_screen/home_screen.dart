@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:my_cart/model/list_model.dart';
 import 'package:my_cart/screens/cart_screen.dart';
+import 'package:my_cart/utilities/common_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -11,40 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<String> names = [
-    'Apple',
-    'Banana',
-    'Orange',
-    'Grapes',
-    'Strawberry',
-    'Watermelon',
-    'Pineapple',
-    'Mango',
-    'Kiwi',
-    'Peach',
-    'Stripes',
-    'Polka Dots',
-    'Floral',
-    'Geometric',
-    'Abstract',
-    'Animal Print',
-    'Tie-Dye',
-    'Ombre',
-    'Plaid',
-    'Checkered',
-    'Milk',
-    'Eggs',
-    'Bread',
-    'Butter',
-    'Cheese',
-    'Yogurt',
-    'Cereal',
-    'Rice',
-    'Pasta',
-    'Flour',
-  ];
-
-  List<String> cartItems = [];
+  List<ListModel> cartItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -62,12 +29,15 @@ class _HomeScreenState extends State<HomeScreen> {
                          fontWeight: FontWeight.bold ),),
                     IconButton(
                       icon: const Icon(Icons.shopping_cart),
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
+                      onPressed: () async{
+                        cartItems = await Navigator.of(context).push(MaterialPageRoute(
                           builder: (BuildContext context) => CartScreen(
                             cartItems: cartItems,
                           ),
                         ));
+                        setState(() {
+
+                        });
                       },
                     ),
                   ],
@@ -80,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
-          itemCount: names.length,
+          itemCount: ComList.names.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 4.0,
@@ -91,32 +61,44 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: Colors.blueGrey.shade200,
                 border: Border.all(width: 2,
-                  color: cartItems.contains(names[index])
-                      ? Colors.purple :Colors.lightGreen,
+                  color: cartItems.contains(ComList.names[index])
+                      ? Colors.purple
+                      : Colors.transparent,
                 ),
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                borderRadius: const BorderRadius.all(Radius.circular(30)),
               ),
               child: Column(
                 children: [
                   Expanded(
-                    child: Center(
-                      child: Text(
-                        names[index],
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.displayMedium
-                            ?.copyWith(fontWeight: cartItems.contains(names[index])
-                            ? FontWeight.bold : FontWeight.normal),
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          ComList.names[index].name,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: cartItems.contains(ComList.names[index])
+                              ? FontWeight.bold : FontWeight.normal),
+                        ),
+                        Text(
+                          "₹ ${ComList.names[index].price}",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: cartItems.contains(ComList.names[index])
+                              ? FontWeight.bold : FontWeight.normal),
+                        ),
+                      ],
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      cartItems.contains(names[index])
-                          ? cartItems.remove(names[index])
-                          : cartItems.contains(names[index]);
+                      cartItems.contains(ComList.names[index])
+                          ? cartItems.remove(ComList.names[index])
+                          : cartItems.add(ComList.names[index]);
                       setState(() {});
                     },
-                    child: cartItems.contains(names[index])
+                    child: cartItems.contains(ComList.names[index])
                         ? const Text('Remove from cart')
                         : const Text('Add to cart'),
                   ),
